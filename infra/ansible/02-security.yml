@@ -1,0 +1,54 @@
+---
+- name: Server Security Hardening
+  hosts: all
+  become: yes
+  tasks:
+    - name: Allow SSH connections
+      ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Allow HTTP and HTTPS
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - '80'
+        - '443'
+        - '6443'
+
+    - name: Enable UFW firewall
+      ufw:
+        state: enabled
+        policy: deny
+
+    - name: Disable Root Login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitRootLogin' 
+        line: 'PermitRootLogin no'
+        state: present
+      notify: Restart SSH
+
+    - name: Disable Password Authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+      notify: Restart SSH
+
+    - name: Disable Empty Passwords
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitEmptyPasswords'
+        line: 'PermitEmptyPasswords no'
+        state: present
+      notify: Restart SSH
+
+  handlers:
+    - name: Restart SSH
+      service:
+        name: ssh
+        state: restarted

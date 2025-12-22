@@ -1,0 +1,50 @@
+---
+- name: Initial Server Setup & Hardening
+  hosts: all
+  become: yes
+  vars:
+    sysadmin_user: "HajAli"
+    pub_key_path: "~/.ssh/loopchat_key.pub"
+  tasks:
+    - name: Update APT package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install essential package
+      apt:
+        name:
+          - curl
+          - ufw
+          - git
+          - htop
+          - net-tools
+          - fail2ban
+        state: present
+      
+    - name: Ensure admin group exists
+      group:
+        name: "{{ sysadmin_user }}"
+        state: present
+
+    - name: Create sysadmin user
+      user:
+        name: "{{ sysadmin_user}}"
+        groups: sudo
+        shell: /bin/bash
+        append: yes
+        state: present
+
+    - name: Set up authorized keys for the HajAli user
+      authorized_key:
+        user: "{{ sysadmin_user }}"
+        state: present
+        key: "{{ lookup('file', pub_key_path) }}"
+
+    - name: Allow 'HajAli' to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
