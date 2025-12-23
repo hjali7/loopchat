@@ -1,24 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mongodb
+  name: postgres
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  sources:
-  - repoURL: registry-1.docker.io/bitnamicharts
-    chart: mongodb
-    targetRevision: 15.x.x
-    helm:
-      valueFiles:
-      - $values/infra/k8s/databases/mongodb/values.yaml
-
-  - repoURL: https://github.com/hjali7/loopchat.git
+  
+  source:
+    repoURL: https://github.com/hjali7/loopchat.git
     targetRevision: main
-    ref: values
-
+    path: infra/k8s/databases/postgres
+    
   destination:
     server: https://kubernetes.default.svc
     namespace: databases
