@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/hjali7/loopchat.git
     targetRevision: main
-    path: infra/k8s/databases/postgres
+    path: infra/k8s/database/postgres
   destination:
     server: https://kubernetes.default.svc
     namespace: databases
