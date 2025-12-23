@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://charts.bitnami.com/bitnami
+  - repoURL: registry-1.docker.io/bitnamicharts
     chart: mongodb
-    targetRevision: 14.x.x
+    targetRevision: 15.x.x
     helm:
       valueFiles:
       - $values/infra/k8s/databases/mongodb/values.yaml
