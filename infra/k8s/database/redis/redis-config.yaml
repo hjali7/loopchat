@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: databases
+data:
+  redis.conf: |
+    requirepass loopchat-redis-secure-pass
+    bind 0.0.0.0
+    appendonly yes
